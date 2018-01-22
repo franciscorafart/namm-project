@@ -44,13 +44,19 @@ firebase.auth().onAuthStateChanged((user)=>{
   //Connect to firebase Before running app
   let database = firebase.database();
 
+  //global user id variable
+  let globalId;
+
 
   function runApp(appUser){
 
+    globalId = appUser.uid
+    console.log(globalId)
     //references
     //TODO: modify reference from user ID
-    let trackReference = database.ref("/Users/"+appUser.uid+"/Playlist/").orderByChild('vote');
-    let messageReference = database.ref("/Users/"+appUser.uid+"/Messages/")
+    let trackReference = database.ref("/Users/"+globalId+"/Playlist/").orderByChild('vote');
+    let messageReference = database.ref("/Users/"+globalId+"/Messages/")
+
     let encoreReference = database.ref('/Users')
 
     //Define class Song class before using it
@@ -77,15 +83,136 @@ firebase.auth().onAuthStateChanged((user)=>{
             var $songListElement = $('<li></li>')
 
             // create delete element
-            var $deleteElement = $('<i class="fa fa-trash pull-right delete"></i>')
-
-            $deleteElement.on('click', function (e) {
-              var id = $(e.target.parentNode).data('id')
-              console.log("clicked");
-              deleteSong(id)
-            })
+            // var $deleteElement = $('<i class="fa fa-trash pull-right delete"></i>')
+            //
+            // $deleteElement.on('click', function (e) {
+            //   var id = $(e.target.parentNode).data('id')
+            //   console.log("clicked");
+            //   deleteSong(id)
+            // })
             //By adding the event listener directly to the specific li, you avoid event listener propagation.
 
+            var $songTitleElement = $('<span>'+songName+'</span>')
+
+            $songTitleElement.on('click', (e)=>{
+              console.log(e.target.innerHTML)
+              $('#whichSong').text(e.target.innerHTML)
+
+              //add value change listener that will update every time
+              // displayTempo(songKey)
+              //Display votes
+              let tempoReference = database.ref("/Users/"+globalId+"/Playlist/"+songKey+"/tempo")
+
+
+              $tempoUl = $("#tempoUl")
+
+
+              //Every time tempo changes in database
+              tempoReference.on("value",()=>{
+
+                //populate ul
+                tempoReference.once('value',(e)=>{
+                  
+                  //empty ul every time a value changes
+                  $tempoUl.empty()
+
+                  let $tempoli1 = "<li><span class='tempo'>Fast</span><span class='tempoSpan'>"+e.val().fast+"</span></li>"
+                  let $tempoli2 = "<li><span class='tempo'>Slow</span><span class='tempoSpan'>"+e.val().slow+"</span></li>"
+                  let $tempoli3 = "<li><span class='tempo'>Really Fast</span><span class='tempoSpan'>"+e.val().reallyFast+"</span></li>"
+                  let $tempoli4 = "<li><span class='tempo'>Really slow</span><span class='tempoSpan'>"+e.val().reallySlow+"</span></li>"
+                  let $tempoli5 = "<li><span class='tempo'>Medium</span><span class='tempoSpan'>"+e.val().medium+"</span></li>"
+
+                  $tempoUl.append($tempoli1)
+                  $tempoUl.append($tempoli2)
+                  $tempoUl.append($tempoli3)
+                  $tempoUl.append($tempoli4)
+                  $tempoUl.append($tempoli5)
+                })
+                  //add ids to tempo elements so that they can reference to the database
+                  let $tempo = $('.tempo')
+
+                  $tempo.attr('data-id', songKey)
+
+                  //TODO: Fix hover for tempo
+                  $tempo.hover((el)=>{
+                    el.target.toggleClass('hover')
+                  })
+                  //add listener to .tempo spans
+                  $tempo.on('click',(e)=>{
+                    e.preventDefault()
+                    e.stopPropagation()
+                    console.log(e.target.innerHTML)
+
+                    let id = $(e.target).data('id')
+                    console.log(id)
+                    //Look for song in database and update tempo
+                    let tempoReference = encoreReference.child("/"+globalId+'/Playlist/'+id+"/tempo")
+
+                    //temporal tempo variables
+                    let fast
+                    let slow
+                    let reallyFast
+                    let reallySlow
+                    let medium
+                    let totalVotes
+
+
+                    //extract current values from tempo node in database
+                    tempoReference.once('value',(e)=>{
+                      fast = e.val().fast
+                      slow = e.val().slow
+                      reallyFast = e.val().reallyFast
+                      reallySlow = e.val().reallySlow
+                      medium = e.val().medium
+                      totalVotes = e.val().totalVotes
+                    })
+
+                    //calculations
+                    switch(e.target.innerHTML){
+                      case "Fast":
+                        fast += 1; break;
+                      case "Slow":
+                        slow +=1; break;
+                      case "Really Fast":
+                        reallyFast += 1; break;
+                      case "Really slow":
+                      reallySlow += 1; break;
+                      case "Medium":
+                      medium +=1; break;
+                      default: console.log("Switch error")
+                    }
+                    totalVotes += 1
+
+                    //TODO: Display which one is winning
+                    let winner = [fast,slow,reallyFast,reallySlow,medium]
+                    let largest = winner.reduce((e,n)=>{
+                      if (e>n){
+                        return e
+                      } else{
+                        return n
+                      }
+                    })
+                    console.log("Largest  = "+winner.indexOf(largest))
+                    // update votes property
+                    tempoReference.update({
+                      fast: fast,
+                      slow: slow,
+                      reallyFast: reallyFast,
+                      reallySlow: reallySlow,
+                      medium: medium,
+                      totalVotes: totalVotes
+                    })
+
+                  })
+              })
+
+
+            })
+
+            //hover to element
+            $songTitleElement.hover(()=>{
+              $songTitleElement.toggleClass('hover')
+            })
             // create up vote element
             var $upVoteElement = $('<i class="fa fa-thumbs-up pull-right"></i>')
 
@@ -111,10 +238,10 @@ firebase.auth().onAuthStateChanged((user)=>{
             $songListElement.attr('vote-count',votes);
 
             // add message to li
-            $songListElement.html(songName)
+            $songListElement.html($songTitleElement)
 
             // add delete element
-            $songListElement.append($deleteElement)
+            // $songListElement.append($deleteElement)
 
             // add voting elements
             $songListElement.append($upVoteElement)
@@ -125,7 +252,6 @@ firebase.auth().onAuthStateChanged((user)=>{
 
             // push element to array of messages
             songArray.push($songListElement)
-
           });
 
 
@@ -142,12 +268,10 @@ firebase.auth().onAuthStateChanged((user)=>{
         })
       }
 
-
-
       function updateSongVote(id, vot) {
         // find message whose objectId is equal to the id we're searching with
 
-        let songReference = encoreReference.child("/"+appUser.uid+'/Playlist/'+id)
+        let songReference = encoreReference.child("/"+globalId+'/Playlist/'+id)
 
         // update votes property
         songReference.update({
@@ -155,15 +279,38 @@ firebase.auth().onAuthStateChanged((user)=>{
         })
       }
 
-      function deleteSong(id) {
-        // find message whose objectId is equal to the id we're searching with
-        let songReference = encoreReference.child("/"+appUser.uid+'/Playlist/'+id)
+      // function deleteSong(id) {
+      //   // find message whose objectId is equal to the id we're searching with
+      //   let songReference = encoreReference.child("/"+appUser.uid+'/Playlist/'+id)
+      //
+      //   songReference.remove();
+      //
+      //   $("li").attr("data-id",id).remove();
+      //
+      //     songClass.getSongs();
+      // }
 
-        songReference.remove();
-
-        $("li").attr("data-id",id).remove();
-
-          songClass.getSongs();
+      function displayTempo(k){
+        // //Display votes
+        // let tempoReference = database.ref("/Users/"+globalId+"/Playlist/"+k+"/tempo")
+        // $tempoUl = $("#tempoUl")
+        // $tempoUl.empty()
+        //
+        // tempoReference.once('value',(e)=>{
+        //   let $tempoli1 = "<li><span class='tempo'>Fast</span><span class='tempoSpan'>"+e.val().fast+"</span></li>"
+        //   let $tempoli2 = "<li><span class='tempo'>Slow</span><span class='tempoSpan'>"+e.val().slow+"</span></li>"
+        //   let $tempoli3 = "<li><span class='tempo'>Really Fast</span><span class='tempoSpan'>"+e.val().reallyFast+"</span></li>"
+        //   let $tempoli4 = "<li><span class='tempo'>Really slow</span><span class='tempoSpan'>"+e.val().reallySlow+"</span></li>"
+        //   let $tempoli5 = "<li><span class='tempo'>Medium</span><span class='tempoSpan'>"+e.val().medium+"</span></li>"
+        //
+        //   $tempoUl.append($tempoli1)
+        //   $tempoUl.append($tempoli2)
+        //   $tempoUl.append($tempoli3)
+        //   $tempoUl.append($tempoli4)
+        //   $tempoUl.append($tempoli5)
+        // })
+        //   //add ids to tempo elements so that they can reference to the database
+        //   $('.tempo').attr('data-id', k)
       }
 
       //returns the class
@@ -261,9 +408,13 @@ firebase.auth().onAuthStateChanged((user)=>{
           for (let el in allSongs){
             console.log(allSongs[el].name)
 
-            //Change track and messages reference to new user and add to the ul list
-            trackReference = database.ref("/Users/"+storeChild.key+"/Playlist/").orderByChild('vote');
+            //Change track and messages gobal reference to new user and add to the ul list
+            // trackReference = database.ref("/Users/"+storeChild.key+"/Playlist/").orderByChild('vote');
+            trackReference = database.ref("/Users/"+storeChild.key+"/Playlist/")
             messageReference = database.ref("/Users/"+storeChild.key+"/Messages/")
+
+            //reassign value of user being queried for other references
+            globalId = storeChild.key
 
             songClass.getSongs()
             messageClass.getMessages()
@@ -273,11 +424,11 @@ firebase.auth().onAuthStateChanged((user)=>{
       })
     })
     //Back end functions
-
-    $('#deleteLame').on('click',function(){
-      console.log("Delete lame");
-      deleteLameTracks();
-    });
+    //
+    // $('#deleteLame').on('click',function(){
+    //   console.log("Delete lame");
+    //   deleteLameTracks();
+    // });
 
     //Function to post messages
     function postMessage(m){

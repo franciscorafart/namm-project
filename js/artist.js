@@ -50,7 +50,15 @@ function runApp(appUser){
   //Object to add songs to the database
   function Song(name){
     this.name = name,
-    this.vote = 0
+    this.vote = 0,
+    this.tempo = {
+      slow: 0,
+      fast: 0,
+      reallyFast: 0,
+      reallySlow: 0,
+      medium: 0,
+      totalVotes: 0
+    }
   }
   //Create a song
   $('#setList-form').submit(function (event) {
