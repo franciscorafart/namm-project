@@ -112,7 +112,7 @@ firebase.auth().onAuthStateChanged((user)=>{
 
                 //populate ul
                 tempoReference.once('value',(e)=>{
-                  
+
                   //empty ul every time a value changes
                   $tempoUl.empty()
 
@@ -323,7 +323,7 @@ firebase.auth().onAuthStateChanged((user)=>{
     let messageClass = function(){
       function getMessages(){
         let $messageUl = $('#fanMessages')
-        let messageArr = []
+        let messageArr = ['<li class="clearfix titleRow"><span>Message</span><span class="whoPost">Fan</span></li>']
 
         //capture data change from database
         messageReference.on('value', function (results){
@@ -331,9 +331,10 @@ firebase.auth().onAuthStateChanged((user)=>{
           results.forEach((child)=>{
 
             let message = child.val().message
+            let user = child.val().user
 
             //Append to ul
-            let $messageListElement = $('<li>'+message+'</li>')
+            let $messageListElement = $('<li class="clearfix"><span>'+message+'</span><span class="whoPost">'+user+'</span></li>')
             messageArr.push($messageListElement)
 
           })
@@ -376,7 +377,7 @@ firebase.auth().onAuthStateChanged((user)=>{
       $('#message').text('');
 
       //TODO: post to messages list
-      postMessage(message)
+      postMessage(message,appUser.displayName)
 
     });
 
@@ -431,55 +432,20 @@ firebase.auth().onAuthStateChanged((user)=>{
     // });
 
     //Function to post messages
-    function postMessage(m){
+    function postMessage(m,userName){
       let timeNow = Date.now()/1000
       console.log(timeNow)
 
       messageReference.push(
         {
           timestamp: timeNow,
+          user: userName,
           message: m
         }
     )
 
     }
 
-
-    function deleteLameTracks(){
-
-      var limit = 3;
-      var keyArray = []; //This will store the ids of elements we are going to remove
-
-      //Delete
-      trackReference.once('value',function(results){
-
-        //Define number of elements in the object
-        var count =0;
-        results.forEach(function(child,i){
-          count++;
-        });
-
-        //Add lower score elements id's to an array
-        var index = 0;
-        results.forEach(function(child){
-          //if the element is not contained in the last elements of the list (the ones we want to keep), then add their key to array
-          if(index<(count-limit)){
-            let id = child.key;
-            keyArray.push(id);
-          }
-          index++;
-
-        });
-
-        //for loop that eliminates from database all elements with the keys in the array
-        keyArray.forEach(function(el,i){
-          let songToDeleteReference = encoreReference.child("/"+appUser.uid+'/Playlist/'+el)
-          // var songToDeleteReference = new Firebase('https://encore-610ad.firebaseio.com/Playlist/' + el);
-          songToDeleteReference.remove();
-        });
-
-      });
-    }
 
     //Button to take time and date elements from DOM
     $("#getDateTime").on("click", function() {

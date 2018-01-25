@@ -3,7 +3,10 @@
 	<head>
     	<meta charset="utf-8">
     	<meta name="description" content="Your description goes here">
-			<meta name content="">
+			<meta name="viewport" content="width=device-width">
+
+			<!--FAVICON-->
+			<link rel="shortcut icon" type="image/png" href="images/logo.png"/>
 
 		<title>ENCORE</title>
 
@@ -42,14 +45,16 @@
         <li><a href="artist.html">Artist</a></li>
       </ul>
       <ul>
-				<li><span id="sign-in">Sign out</span></li>
+				<li><a href="#" id="sign-in">Sign out</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
     </header>
+		<div class="logoDiv">
+			<h1>ENCORE</h1>
+			<h3 class="tagline">Do you want more...?</h3>
+			<h2 class="tagline2">#1 Crowd Sourcing Playlist</h2>
+		</div>
 
-		<h1>ENCORE</h1>
-		<h3 class="tagline">Do you want more...?</h3>
-		<h2 class="tagline2">#1 Crowd Sourcing Playlist</h2>
 
 		<!-- Solange/Artist info -->
 		<!-- <ul id="artistinfo">
@@ -61,44 +66,48 @@
 		</ul> -->
 
 		<input type="text" id="searchArtist" placeholder="Search artist...">
-		<h3 id="artistSearched"></h3>
+
 
 		<section class="setlist">
-			<h2>Set Playlist</h2>
+			<h2>Vote for Set playlist</h2>
+			<h3 id="artistSearched"></h3>
 			<ul id="setlist">
 
 			</ul>
 		</section>
 
 		<section class="setlist">
-			<p><h3>Song: </h3><h3 id="whichSong"></h3></p>
-			<div class="">
-				<h3>Vote Tempo</h3>
+			<h2>Songs</h2>
+			<h3 id="whichSong"></h3>
+				<h3>Select your prefered tempo</h3>
 				<ul id="tempoUl">
 
 				</ul>
-				<h3><span>Winner: </span><span id="tempoWinner"></span><span> with </span><span id="totalTempoVotes"></span><span>total votes</span></h3>
-			</div>
 		</section>
 
 		<section class="messageSection">
+
 				<div class="votedate">
 					<h3 class="deadline">Vote by 12/02/2017</h3>
 				</div>
 
 				<div class="container">
+
 			      <!-- <div class="panel panel-danger"> -->
 			        <!-- <div class="panel-heading">Don't see a song you like? Post YOUR favorite song and Solange might play it live!</div> -->
 							<h2>Don't see a song you like? Post YOUR favorite song and it might get played live!</h2>
 							<div class="panel-body clearfix">
+								<h2>Messages</h2>
+								<h3>Write a message:</h3>
 								<div class="">
+
 									<form action="" id="message-form">
 				            <div class="form-group">
-				              <label>Message:</label>
-											<textarea id="message" type="text" class="form-control"></textarea>
 
+											<textarea id="message" type="text" class="form-control"></textarea>
+											<button class="btn btn-default">Post to board</button>
 				            </div>
-				            <button class="btn btn-default">Post to board</button>
+
 				          </form>
 								</div>
 

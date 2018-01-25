@@ -66,15 +66,18 @@ body{
   background-repeat: no-repeat;
 }
 h1{
-  color: white;
   font-size: 3.5em;
-  margin-left: 5%;
 }
-h2, h3, h1, h6, h5{
+h2{
+  font-size: 1.8em;
+}
+h1, h2, h3, h1, h6, h5{
   color: white;
 }
+
 a, ul{
   margin: 0;
+  padding: 0;
 }
 li{
   list-style: none;
@@ -83,25 +86,42 @@ li{
 label{
   color: white;
 }
-header{
-  height:45px;
-  /* border: 1px solid white; */
-}
+
 header ul li{
   float: left;
   margin-right: 30px;
+  padding-top: 12px;
+}
+header ul li:first-of-type{
+  margin-left: 30px;
 }
 header ul li a, header ul li span{
   font-size: 1.4em;
   color: white;
   text-decoration: none;
-  position: relative;
-  top: 12px;
 }
 header ul:last-of-type{
   float: right;
 }
 
+
+#searchArtist{
+  width: 40%;
+  height: 40px;
+  font-size: 1.6em;
+  margin: 100px 0 0 30%;
+  text-align: center;
+}
+#artistSearched{
+  font-size: 1.8em;
+  text-align: center;
+}
+.logoDiv{
+  width:40%;
+  margin: 0 0 0 5%;
+  padding-top: 40px;
+  clear: both;
+}
 .setlist{
   min-height:350px;
   width: 85%;
@@ -117,14 +137,14 @@ header ul:last-of-type{
   color: white;
   font-size: 1.6em;
 }
-.setlist h2, .messageSection h2{
+.setlist h2, .messageSection h2, .setlist h3{
   text-align: center;
 }
 .tagline{
-  margin: -2% 0 0 8.5%;
+  margin: 0 0 0 2.5%;
 }
 .tagline2{
-  margin: .5% 0 0 9.5%;
+  margin: 0 0 0 3.5%;
   font-size: 1em;
 }
 .deadline{
@@ -140,17 +160,55 @@ padding-left: 3px;
 .tempoSpan{
   float: right;
 }
-
+/* message section */
 .messageSection{
   width: 85%;
   margin-left: 7.5%;
-
 }
 .panel-body{
-  min-height:200px;
+  min-height:350px;
   border: 2px solid yellow;
+  padding: 20px 10% 20px 10%;
   background: rgba(255, 255, 255, 0.3);
 }
+.panel-body h3{
+  color: white;
+  display: block;
+  width: 100%;
+  font-size: 1.3em;
+  text-align: center;
+}
+.form-group{
+  padding: 20px 30% 20px 30%;
+}
+.form-group textarea{
+  width: 100%;
+  height: 80px;
+  font-size: 1.4em;
+  margin: 10px 0 10px 0;
+}
+.form-group button{
+  display: block;
+  clear:both;
+}
+#fanMessages li span:first-of-type{
+  display: block;
+  width: 60%;
+  float: left;
+  padding-right: 5%;
+}
+#fanMessages li span:last-of-type{
+  display: block;
+  width: 40%;
+  float: left;
+}
+.whoPost{
+  float:right;
+}
+.titleRow span{
+ color: black;
+}
+
 #artistinfo{
   margin-left: 77%;
   margin-top: -8%;
@@ -164,4 +222,52 @@ padding-left: 3px;
 .backend{
   clear: both;
   background: black;
+}
+.porfileDiv{
+  margin-bottom: 70px;
+}
+.profileDiv form input{
+  font-size: 1.4em;
+}
+#deleteLame{
+  margin-top: 20px;
+}
+
+/* Mobile */
+
+@media only screen and (max-width:600px){
+  header nav li{
+    clear: both;
+    float: none;
+  }
+  #searchArtist{
+    width: 80%;
+    margin: 100px 0 0 10%
+  }
+  .logoDiv{
+    width:40%;
+    margin: 40px 0 0 30%;
+    float: none;
+  }
+  .form-group{
+    padding: 20px 15% 20px 15%;
+  }
+
+  span{
+    font-size: 0.8em;
+  }
+
+  header ul li{
+    float: left;
+    margin: 0;
+    width: 40%;
+    margin: 20px 0 0 10%;
+  }
+  header ul li:first-of-type{
+    margin: 20px 0 0 10%;
+  }
+  header ul:last-of-type{
+    float: none;
+  }
+
 }

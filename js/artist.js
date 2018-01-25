@@ -112,4 +112,40 @@ function runApp(appUser){
   })
 
 
+  function deleteLameTracks(){
+
+    var limit = 3;
+    var keyArray = []; //This will store the ids of elements we are going to remove
+
+    //Delete
+    trackReference.once('value',function(results){
+
+      //Define number of elements in the object
+      var count =0;
+      results.forEach(function(child,i){
+        count++;
+      });
+
+      //Add lower score elements id's to an array
+      var index = 0;
+      results.forEach(function(child){
+        //if the element is not contained in the last elements of the list (the ones we want to keep), then add their key to array
+        if(index<(count-limit)){
+          let id = child.key;
+          keyArray.push(id);
+        }
+        index++;
+
+      });
+
+      //for loop that eliminates from database all elements with the keys in the array
+      keyArray.forEach(function(el,i){
+        let songToDeleteReference = encoreReference.child("/"+appUser.uid+'/Playlist/'+el)
+        // var songToDeleteReference = new Firebase('https://encore-610ad.firebaseio.com/Playlist/' + el);
+        songToDeleteReference.remove();
+      });
+
+    });
+  }
+
 }
